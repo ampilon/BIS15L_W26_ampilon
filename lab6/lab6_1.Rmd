@@ -183,7 +183,16 @@ mammals%>%
 ## Practice
 1. Following the example above, convert all -999 values in the mammals dataframe to NA.
 ```{r}
-
+mammals <- mammals%>%
+  mutate(across(c(mass,
+                  wean_mass,
+                  gestation,
+                  max_life,
+                  newborn,
+                  weaning,
+                  litter_size,
+                  afr,
+                  litters_year), ~ifelse(.==-999, NA, .)))
 ```
 
 ```{r}
@@ -192,17 +201,24 @@ mammals%>%
 
 2. In the mammals data, make a new column `mass_kg` that that converts mass from grams to kilograms. Select the columns genus, species, mass, and mass_kg, and arrange the data by mass_kg in descending order. What is the common name for the species with the highest mass?  
 ```{r}
-
+mammals%>%
+  mutate(mass_kg=mass/1000)%>%
+  select(genus, species, )%>%
+  mutate()
 ```
 
 3. What is the relationship between gestation and newborn mass?
 ```{r}
-
+mammals%>%
+  ggplot(mapping = aes(x=gestation, y=newborn_new))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  #log thing
 ```
 
 4. Which mammal has the longest life span in years?  
 ```{r}
-
+arrange(dec(max_height()))
 ```
 
 5. Do larger mammals live longer?
