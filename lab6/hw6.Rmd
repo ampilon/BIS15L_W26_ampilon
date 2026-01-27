@@ -107,8 +107,10 @@ ggplot(mapping = aes(x= veg_rich, y=rich_mammal_species))+
 
 **9. Use `filter` to find all transects that have greater than 15 tree species or a breast height diameter between 50 and 60cm.  **
 ```{r}
-gabon%>%
-  select(transect_id, )
+#gabon%>%
+  #select(transect_id, tree_species, breast_height)%>%
+  #filter(tree_species > 15, Breast_height>50, breast_height<60)
+#could not find data with tree species number or breast height
 ```
 
 ```{r}
@@ -117,7 +119,12 @@ names(gabon)
 
 **10.Which transects and land use types have more than 10 tree species and 10 mammal species? Use `arrange()` to sort by the number of tree species.**
 ```{r}
-
+gabon%>%
+  select(transect_id, veg_rich, rich_mammal_species)%>%
+  filter(veg_rich > 10, rich_mammal_species > 10)%>%
+  arrange(veg_rich)
+#could not find data with tree species number?
+#ideally would replace veg_rich with tree species richness
 ```
 
 ## Knit and Upload
