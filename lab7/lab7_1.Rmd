@@ -161,32 +161,42 @@ Although `summarize()` is helpful, oftentimes we are only interested in counts. 
 For example, if we wanted to count the number of observations for each `vore` category in the `msleep` data frame we could do the following:
 ```{r}
 msleep %>%
-  
+  count(vore)
 ```
 
 ```{r}
-
+msleep %>%
+  count(vore) %>%
+  ggplot(aes(x=vore, y=n))+
+  geom_col() #use when we have an x and a y
 ```
 
 You can even combine multiple variables to get counts. For example, if we wanted to count the number of observations for each `vore` category within each `order` category we could do the following:
 ```{r}
-
+msleep %>%
+  count(vore, order)
 ```
 
 The tabyl() function from the janitor package is also very useful for producing counts and percentages.  
 ```{r}
-
+msleep %>%
+  tabyl(vore)
 ```
 
 ## Practice
 1. In the taxonomic order Carnivora, count the number of observations for each conservation status.
 ```{r}
-
+msleep%>%
+  filter(order== "Carnivora")%>%
+  count(conservation)
 ```
+
 
 2. Among herbivores, which order is most represented? Return the top 5 orders with counts, sorted in descending order.
 ```{r}
-
+msleep%>%
+  filter(vore== "herbi")%>%
+  count(order, sort =T)
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)  
