@@ -56,7 +56,7 @@ gabon <- gabon%>%
 **5. Make a plot that shows the number of transects for each land use type.**
 ```{r}
 gabon%>%
-ggplot(mapping = aes(x=land_use, y= transect_id))+
+ggplot(mapping = aes(x=land_use))+
   geom_bar()+
   labs(title="number of transects by land use type", x="land use type", y="number of transects")
 ```
