@@ -42,9 +42,10 @@ names(elephants)
 
 **5. Use `mutate()` Change the variables `years_of_sample_collection`, `elephant_id`, and `sex` to factors. Be sure to store the output as a new dataframe and use it for the remaining questions.**  
 ```{r}
-#elephants_final <- elephants %>%
- # mutate(across(years_of_sample_collection, sex, elephant_id), as.factor())
-#elephants_final
+elephants_final <- elephants %>%
+  mutate(across(c(years_of_sample_collection, elephant_id, sex), as.factor))
+
+elephants_final
 ```
 **6. From which years were data collected? Show the sample periods below.**  
 ```{r}
@@ -54,10 +55,10 @@ elephants_final%>%
 
 **7. How many males and females were sampled in this study?**  
 ```{r}
-elephants_final%>%
-  ggplot(mapping = aes(x=sex))+
-  geom_bar()+
-  labs(title="males and females elephants", x="sex", y="count")
+#elephants_final%>%
+ # ggplot(mapping = aes(x=sex))+
+ # geom_bar()+
+  #labs(title="males and females elephants", x="sex", y="count")
 elephants_final%>%
   count(sex)
 ```
@@ -70,7 +71,35 @@ elephants_final_female <- elephants_final%>%
 ```{r}
 elephants_final_male <- elephants_final%>%
   filter(sex=="m")
-###MORE
+```
+```{r}
+elephants_final_male %>%
+  filter(years_of_sample_collection=="1966-68")%>%
+  summarise(mean_age_m=mean(estimated_age_years),
+            median_age_m=median(estimated_age_years),
+            sd_age_m=sd(estimated_age_years),
+            total=n())
+elephants_final_male %>%
+  filter(years_of_sample_collection=="2005-13")%>%
+  summarise(mean_age_m=mean(estimated_age_years, na.rm = T),
+            median_age_m=median(estimated_age_years, na.rm = T),
+            sd_age_m=sd(estimated_age_years, na.rm = T),
+            total=n())
+```
+```{r}
+elephants_final_female %>%
+  filter(years_of_sample_collection=="1966-68")%>%
+  summarise(mean_age_f=mean(estimated_age_years, na.rm = T),
+            median_age_f=median(estimated_age_years, na.rm = T),
+            sd_age_f=sd(estimated_age_years, na.rm = T),
+            total=n())
+elephants_final_female %>%
+  filter(years_of_sample_collection=="2005-13")%>%
+  summarise(mean_age_f=mean(estimated_age_years, na.rm = T),
+            median_age_f=median(estimated_age_years, na.rm = T),
+            sd_age_f=sd(estimated_age_years, na.rm = T),
+            total=n())
+#there are a lot less elephant data points for 2005-13 in both male and female. The average age of females 1966-68 is much higher. It evens out in 2005-2013.
 ```
 **9. Is age (independent variable) a positive predictor of tusk length (dependent variable)? Create a plot that shows the relationship between these variables and add a linear model fit line.**  
 ```{r}
@@ -85,11 +114,11 @@ ggplot(mapping = aes(x= estimated_age_years, y=tusk_length_in_cm))+
 **10. Is shoulder height (independent variable) a positive predictor of tusk length (dependent variable)? Create a plot that shows the relationship between these variables and add a linear model fit line.**  
 ```{r}
 elephants_final%>%
-ggplot(mapping = aes(x= estimated_age_years, y=shoulder_height_in_cm))+
+ggplot(mapping = aes(x= shoulder_height_in_cm, y=tusk_length_in_cm))+
   geom_point()+ 
-  labs(title="age vs shoulder height", x="age", y="shoulder height")+
+  labs(title="shoulder height vs tusk length", x="shoulder height", y="tusk length")+
   geom_smooth(method="lm", se=F)
-# Yes, age is a positive predictor of shoulder height.
+# Yes, shoulder height is a positive predictor of tusk length.
 ```
 
 **11. The authors argue that because poachers preferentially target elephants with large tusks, this has resulted in a decrease in average tusk length. Is this supported by the data? Show your code and calculations below.**  
