@@ -102,7 +102,7 @@ penguins %>%
 ```{r}
 penguins%>%
   mutate(body_mass_kg = body_mass_g/1000)%>%
-  select(body_mass_kg, body_mass_g)%>%
+  select(body_mass_kg, body_mass_g)
 ```
 
 ## `mutate()` and `across()`
@@ -146,7 +146,7 @@ glimpse(mammals)
 Notice that `clean_names()` has converted all column names to lowercase and replaced spaces with underscores. But, no adjustments were made to the data itself. What if we want to change observations from upper case to lower case?
 ```{r}
 mammals%>%
-  mutate(across(c("order", "family"), tolower)) #specific coulums
+  mutate(across(c("order", "family", "Genus"), tolower)) #specific coulums
 ```
 
 This will change all columns to lower case. But, notice what happens to numeric columns.
