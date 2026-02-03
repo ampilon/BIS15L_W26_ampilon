@@ -34,7 +34,9 @@ elephants <- read_csv("data/elephants.csv") %>%
 
 1. What is the average age, shoulder height, tusk length, and tusk circumference for all elephants in the data set?
 ```{r}
-
+elephants %>%
+  summarise(across(where(is.numeric),
+                   ~mean(.x, na.rm=T)))
 ```
 
 We can include multiple functions using this same structure, but it becomes cumbersome.
@@ -58,7 +60,10 @@ elephants %>%
 ## `group_by()`
 The `summarize()` function is often more useful when used with `group_by()`. `group_by()` allows us to group data by a categorical variable(s) of interest.   
 ```{r}
-
+elephants %>%
+  group_by(sex) %>%
+  summarise(across(where(is.numeric),
+                   ~mean(.x, na.rm=T)))
 ```
 
 Notice that the output doesn't look different, but two groups are indicated. Any verbs that follow `group_by()` will be applied to each group separately. For example, what is the average age, shoulder height, tusk length, and tusk circumference for males and females?
@@ -68,7 +73,12 @@ Notice that the output doesn't look different, but two groups are indicated. Any
 
 We can group by more than one variable.
 ```{r}
-
+elephants %>%
+  group_by(sex, years_of_sample_collection) %>%
+  summarise(estimated_age_years=mean(estimated_age_years, na.rm= T), 
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 Do you remember this question from homework 7?  
@@ -77,15 +87,30 @@ Do you remember this question from homework 7?
 
 Without `group_by()`, we had to produce multiple code chunks- we are now more efficient!
 ```{r}
-
+elephants %>%
+  group_by(sex, years_of_sample_collection) %>%
+  summarise(estimated_age_years=mean(estimated_age_years, na.rm= T), 
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 ```{r}
-
+elephants %>%
+  group_by(sex, years_of_sample_collection) %>%
+  summarise(median_age_years=median(estimated_age_years, na.rm= T), 
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 ```{r}
-
+elephants %>%
+  group_by(sex, years_of_sample_collection) %>%
+  summarise(sd_age_years=sd(estimated_age_years, na.rm= T), 
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 ## Practice
@@ -93,17 +118,31 @@ Use the built-in `msleep` data to answer the following questions.
 
 1. Calculate the min, max, mean, and total number of observations for body weight by vore.  
 ```{r}
-
+msleep %>%
+  group_by(vore) %>%
+  summarise(mean_bodywt=mean(bodywt, na.rm= T),
+            max_bodywt=max(bodywt, na.rm= T),
+            min_bodywt=min(bodywt, na.rm= T),
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 2. Calculate mean brain weight by taxonomic order in the msleep data.
 ```{r}
-
+msleep %>%
+  group_by(order) %>%
+  summarise(mean_brain_weight=mean(brainwt, na.rm= T), 
+                   
+                   number=n(),
+            .groups ='keep')
 ```
 
 3. Try running the code again, but this time add `na.rm=TRUE`. What is the problem with Cetacea?
 ```{r}
-
+msleep %>%
+  filter(order=="Cetacea")
+# brainwt is NA for all 3 samples of Cetacea, either not measured or dont have a brain.
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
