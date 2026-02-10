@@ -35,12 +35,20 @@ sharks <-
 1. Are there any "hotspots" for shark incidents in California? Show the top five counties with the most incidents.
 ```{r}
 sharks %>%
-  
+  count(county) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=5)
 ```
 
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
-
+sharks %>%
+  ggplot(aes(x=county, fill=county))+
+  geom_bar()+
+  coord_flip()+
+  labs(title="Observations per county",
+       x="county",
+       y=NULL)
 ```
 
 3. Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?  

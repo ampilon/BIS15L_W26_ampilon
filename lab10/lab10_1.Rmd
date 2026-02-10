@@ -105,10 +105,9 @@ Box plots are used to visualize a range of values. So, on the x-axis we have a c
 ```{r}
 life_history %>%
   group_by(order) %>%
-  ggplot(mapping = aes(x=order, y=mass))+
+  ggplot(mapping = aes(x=order, y=log10(mass)))+
   geom_boxplot(na.rm=T)+
-  coord_flip()+
-  scale_y_log10()
+  coord_flip()
 ```
 
 ## Aesthetics: Labels
@@ -120,7 +119,15 @@ Now that we have practiced scatter plots, bar plots, and box plots we need to le
 
 Is there a relationship between mass and litter size; i.e. do larger mammals have more offspring?
 ```{r}
-
+life_history %>%
+  ggplot(mapping=aes(x=mass, y=litter_size))+
+  geom_point()+
+  scale_x_log10()+
+  geom_smooth(method = lm, se= F,na.rm = T)+
+  labs(title = "Mass vs Litter Size",
+       x= "Mass",
+       y="litter size")+
+  theme(plot.title = element_text(size=15), hjust=.5)
 ```
 
 The plot looks clean, but it is incomplete. A reader unfamiliar with the data might have a difficult time interpreting the labels. To add custom labels, we use the `labs` command.
