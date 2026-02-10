@@ -29,47 +29,76 @@ This homework loosely follows the tutorial of [R Ladies Sydney](https://rladiess
 
 1. Start by loading the data `sydneybeaches`. Do some exploratory analysis to get an idea of the data structure.
 ```{r}
-
+sbeaches <- read.csv("data/sydneybeaches.csv")
+glimpse(sbeaches)
 ```
 
 2. Are these data "tidy" per the definitions of the tidyverse? How do you know? Are they in wide or long format?
 ```{r}
-
+# yes it is tidy because each column is a variable and the observations are in rows. They are in long format because each date is separated into rows
 ```
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 ```{r}
-
+sydneybeaches_long <- sbeaches %>%
+  select(Site,Date,Enterococci..cfu.100ml.)
 ```
 
 4. Pivot the data such that the dates are column names and each beach only appears once (wide format). Name the object `sydneybeaches_wide`
 ```{r}
-
+sydneybeaches_wide <- sydneybeaches_long %>%
+   pivot_wider(
+    names_from = Date,
+    values_from = Enterococci..cfu.100ml.)
 ```
 
 5. Pivot the data back so that the dates are data and not column names.
 ```{r}
-
+sydneybeaches_wide %>%
+  pivot_longer(
+    cols = -Site, 
+    names_to = "date", 
+    values_to = "enterococci")
 ```
 
 6. We haven't dealt much with dates yet, but separate the date into columns day, month, and year. Do this on the `sydneybeaches_long` data.
 ```{r}
-
+beaches_dates_seperated <- sydneybeaches_long %>%
+    separate(
+    Date,
+    into = c("day", "month", "year"),
+    sep = "/")
 ```
 
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
 ```{r}
-
+beaches_dates_seperated %>%
+  group_by(year, Site) %>%
+  summarise(mean_enter = mean(Enterococci..cfu.100ml., na.rm = TRUE)) %>%
+  arrange(year)
+by_year_beach<- beaches_dates_seperated %>%
+  group_by(year, Site) %>%
+  summarise(mean_enter = mean(Enterococci..cfu.100ml., na.rm = TRUE)) %>%
+  arrange(year)
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
-
+by_year_beach %>%
+  pivot_wider(
+    names_from = Site,
+    values_from = mean_enter)
+better_by_year <-by_year_beach %>%
+  pivot_wider(
+    names_from = Site,
+    values_from = mean_enter)
 ```
 
 9. What was the most polluted beach in 2013?
 ```{r}
-
+better_by_year %>%
+  filter(year=="2013")
+# Little Bay Beach was the most polluted in 2013
 ```
 
 ```{r}
@@ -78,7 +107,12 @@ This homework loosely follows the tutorial of [R Ladies Sydney](https://rladiess
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
 ```{r}
-
+beaches_dates_seperated %>%
+  filter(Site=="Clovelly Beach") %>%
+  filter(year=="2015")%>%
+  group_by(month)%>%
+  summarise(mean_enter = mean(Enterococci..cfu.100ml.))
+# in 2015 the most polluted month on Clovelly Beach was April with a Enterococci..cfu.100ml. of 22.2500000.
 ```
 
 ## Knit and Upload
