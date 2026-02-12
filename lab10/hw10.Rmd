@@ -95,32 +95,78 @@ widesharks <- sharks %>%
 ```
 
 ```{r}
-widesharks %>%
-  count()
+sharks %>%
+  count(county)
 ```
+```{r}
+sharks %>%
+  group_by(county) %>%
+  count(injury)
+```
+
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
 ```{r}
+sharks %>%
+  mutate(injury= ifelse(injury=="none*","none", injury)) %>%
+  mutate(injury= ifelse(injury=="major*","major", injury)) %>%
+  mutate(injury= ifelse(injury=="minor*","minor", injury)) %>%
+  ggplot(aes(x=county, fill = county))+
+  geom_bar()+
+  theme(axis.text.x=element_text(angle = 45, hjust=1))+
+  labs(title="Incidents per County",
+       x="Island",
+       y=NULL) 
+```
 
+```{r}
+sharks %>%
+  mutate(injury= ifelse(injury=="none*","none", injury)) %>%
+  mutate(injury= ifelse(injury=="major*","major", injury)) %>%
+  mutate(injury= ifelse(injury=="minor*","minor", injury)) %>%
+  ggplot(aes(x=county, fill=injury))+
+  geom_bar(position = "dodge")+
+  theme(axis.text.x=element_text(angle = 45, hjust=1))+
+  labs(title="injury types per county",
+       x="county",
+       y=NULL) 
 ```
 
 7. In the data, `mode` refers to a type of activity. Which activity is associated with the highest number of incidents?
 ```{r}
-
+sharks %>%
+  count(mode)
+#surfing/boarding is associated with the most incidents
 ```
 
 8. Make a plot that compares the number of incidents by activity.
 ```{r}
-
+sharks %>%
+  ggplot(aes(x=mode, fill = mode))+
+  geom_bar()+
+  theme(axis.text.x=element_text(angle = 45, hjust=1))+
+  labs(title="Incidents by Activity",
+       x="Activity",
+       y=NULL) 
 ```
 
 9. Which shark species is involved in the highest number of incidents?  
 ```{r}
-
+sharks %>%
+  count(species)
+# the White shark is involved in the greatest number of incidents
 ```
 
 10. Are all incidents involving Great White's fatal? Make a plot that shows the number and types of incidents for Great White's only.  
 ```{r}
-
+sharks %>%
+  filter(species== "White") %>%
+  mutate(injury= ifelse(injury=="none*","none", injury)) %>%
+  ggplot(aes(x= injury), fill = injury)+
+  geom_bar()+
+  theme(axis.text.x=element_text(angle = 45, hjust=1))+
+  labs(title="Injury Types for Great White Incidents",
+       x="Injury",
+       y=NULL) 
 ```
 
 ## Knit and Upload
