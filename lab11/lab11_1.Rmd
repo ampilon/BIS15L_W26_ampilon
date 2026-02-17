@@ -112,11 +112,11 @@ gap %>%
 ## Practice
 1. Antibiotics became widely available in the 1940's. How did life expectancy change between 1930 and 1950? Let's plot the density curves for both years on the same plot. Use the `fill` aesthetic to differentiate the two years.
 ```{r warning=FALSE}
-#gap %>%
+gap %>%
   filter(year %in% c(1930, 1950)) %>%
-  mutate(year=factor(year)) %>%
-  ggplot(aes(x=lex, color = year, fill = year))+
-  geom_density(alpha(0.5))
+  mutate(year = factor(year)) %>%
+  ggplot(aes(x = lex, fill = year)) +
+  geom_density(alpha = 0.5)
 ```
 
 ## Create Categories with mutate and case_when()
