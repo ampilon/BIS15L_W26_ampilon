@@ -59,8 +59,8 @@ life_history_no_nas %>%
 
 Here we look for all of the -999's.
 ```{r}
-life_history %>% #something is wrong here
-  summarise(across(everything(), ~sum(is.na(.==-999))))
+life_history %>%
+  summarise(across(everything(), ~sum(. == -999, na.rm = TRUE)))
 ```
 
 ## Dealing with NA's using `read_csv()`
