@@ -29,7 +29,8 @@ gestation <- read_csv("data/Data_S1.csv") %>%
 ```
 
 ```{r}
-names(gestation)
+gestation %>%
+distinct(order)
 ```
 
 ## Aesthetics
@@ -37,7 +38,41 @@ There are many ways to adjust shiny apps for better visual appeal. Let's start w
 
 1. Build an app that allows users to select a mammalian `order` and a variable of interest (body mass, longevity, or gestation length) and then plots the density distribution of that variable for the selected order.
 ```{r, eval=F, echo=T}
+ui <- fluidPage(
+ 
+  selectInput("y",
+              "Select a variable of interest",
+              choices = c("bodymass",
+                          "longevity",
+                          "gestationlength"),
+              selected = "gestationlength"),
+  
+  selectInput("x",
+              "Select an order:",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida"),
+  
+  plotOutput("plot", width = "500px", height = "400px")
+   
+)
 
+server <- function(input, output, session) {
+
+  output$plot <- renderPlot({
+    
+    gestation %>%
+      filter(input$x == .data[["order"]]) %>%
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill = "steelblue", 
+                   color= "black",
+                   alpha = .6) +
+      theme_minimal()
+    
+  })
+    
+}
+
+shinyApp(ui, server)
 ```
 
 ## ui Layout with `shinydashboard`
@@ -63,7 +98,46 @@ shinyApp(ui, server)
 
 Let's add our ui and server elements to make a functional dashboard. We will put our ui elements in the `dashboardBody()`. For now, we will turn off the sidebar.
 ```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  
+  dashboardHeader(title = "Distribution of Gestation Lengths by Order"),
+  dashboardSidebar(disable = TRUE),
+  dashboardBody(
+  
+ 
+  selectInput("y",
+              "Select a variable of interest",
+              choices = c("bodymass",
+                          "longevity",
+                          "gestationlength"),
+              selected = "gestationlength"),
+  
+  selectInput("x",
+              "Select an order:",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida"),
+  
+  plotOutput("plot", width = "500px", height = "400px")
+  )  
+)
 
+server <- function(input, output, session) {
+
+  output$plot <- renderPlot({
+    
+    gestation %>%
+      filter(input$x == .data[["order"]]) %>%
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill = "steelblue", 
+                   color= "black",
+                   alpha = .6) +
+      theme_minimal()
+    
+  })
+    
+}
+
+shinyApp(ui, server)
 ```
 
 Now let's add our server functions.
@@ -73,7 +147,50 @@ Now let's add our server functions.
 
 What if you want to turn on the sidebar and put the inputs there? We can do that by moving the `selectInput()` functions to the `dashboardSidebar()`.
 ```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  
+  dashboardHeader(title = "Distribution of Gestation Lengths by Order"),
+  
+  dashboardSidebar(
+ 
+  selectInput("y",
+              "Select a variable of interest",
+              choices = c("bodymass",
+                          "longevity",
+                          "gestationlength"),
+              selected = "gestationlength"),
+  
+  selectInput("x",
+              "Select an order:",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida")
+  
+),
 
+  dashboardBody(
+    
+  plotOutput("plot", width = "500px", height = "400px")
+  
+  )  
+)
+
+server <- function(input, output, session) {
+
+  output$plot <- renderPlot({
+    
+    gestation %>%
+      filter(input$x == .data[["order"]]) %>%
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill = "steelblue", 
+                   color= "black",
+                   alpha = .6) +
+      theme_light()
+    
+  })
+    
+}
+
+shinyApp(ui, server)
 ```
 
 Whew! We made it! We created a nice looking app with `shinydashboard`. And now we can easily see how even a basic shiny app can become messy and why it's always helpful to include lots of annotations. chatGPT can really help troubleshoot errors and is especially helpful with annotation.    
@@ -100,7 +217,46 @@ wolves %>%
 ```
 
 ```{r, eval=F, echo=T}
+# ui <- dashboardPage(
+  
+ # dashboardHeader(title = "Sex Compostion by Wolf Population"),
+  
+#  dashboardSidebar(disable = T)
 
+#  dashboardBody(
+    
+  selectInput("x",
+              "Sex",
+              choices = c("M",
+                          "F"),
+              selected = "F"),
+  
+  selectInput("y",
+              "Select a pop:",
+              choices = sort(unique(wolves$pop)),
+              selected = "AK.PEN"),  
+    
+    
+  plotOutput("plot", width = "500px", height = "400px")
+  
+  )  
+)
+
+server <- function(input, output, session) {
+
+  output$plot <- renderPlot({
+    
+  wolves %>% 
+  filter(pop == imput$x) %>% 
+  ggplot(aes(x= sex, fill = sex))+
+  geom_bar(alpha = .75)+
+  theme_light()
+    
+  })
+    
+}
+
+shinyApp(ui, server) # boxplot on hw, must put. a read csv on hw
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
