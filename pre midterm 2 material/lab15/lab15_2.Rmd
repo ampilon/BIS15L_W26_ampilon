@@ -217,43 +217,37 @@ wolves %>%
 ```
 
 ```{r, eval=F, echo=T}
-# ui <- dashboardPage(
+ui <- dashboardPage(
   
- # dashboardHeader(title = "Sex Compostion by Wolf Population"),
+  dashboardHeader(title = "Sex Composition by Wolf Population"),
   
-#  dashboardSidebar(disable = T)
-
-#  dashboardBody(
+  dashboardSidebar(disable = TRUE),
+  
+  dashboardBody(
     
-  selectInput("x",
-              "Sex",
-              choices = c("M",
-                          "F"),
-              selected = "F"),
-  
-  selectInput("y",
-              "Select a pop:",
-              choices = sort(unique(wolves$pop)),
-              selected = "AK.PEN"),  
+    selectInput("pop",
+                "Select a population:",
+                choices = sort(unique(wolves$pop)),
+                selected = "AK.PEN"),
     
+    plotOutput("plot", width = "500px", height = "400px")
     
-  plotOutput("plot", width = "500px", height = "400px")
-  
-  )  
+  )
 )
 
 server <- function(input, output, session) {
 
   output$plot <- renderPlot({
     
-  wolves %>% 
-  filter(pop == imput$x) %>% 
-  ggplot(aes(x= sex, fill = sex))+
-  geom_bar(alpha = .75)+
-  theme_light()
+    wolves %>% 
+      filter(sex != "NA") %>% 
+      filter(pop == input$pop) %>% 
+      ggplot(aes(x = sex, fill = sex)) +
+      geom_bar(alpha = .75) +
+      theme_light() +
+      labs(title = paste("Sex Composition in", input$pop))
     
   })
-    
 }
 
 shinyApp(ui, server) # boxplot on hw, must put. a read csv on hw

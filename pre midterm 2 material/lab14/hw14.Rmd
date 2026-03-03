@@ -95,7 +95,7 @@ SD_sharks <- sharks %>%
   distinct(longitude, latitude)
 
 leaflet(SD_sharks) %>%
-  addProviderTiles(providers$Stadia.StamenTerrain) %>%
+  addProviderTiles(providers$Terrain) %>%
   addCircleMarkers(
     lng = ~longitude,
     lat = ~latitude,
