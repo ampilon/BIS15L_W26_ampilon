@@ -85,7 +85,8 @@ Lets move to a new directory.  To navigate to a new directory we use the `cd` co
 ```{} 
 # cd stands for change directory
 
-cd Documents/
+
+
 ```
 
 **Similar to in R, typing out file or directory names can waste a lot of time and it’s easy to make typing mistakes. Instead we can use tab complete as a shortcut. Start by typing out the name of a directory or file, then hit the Tab key, the rest of the directory or file name will fill in if it is distinct.** 
@@ -162,13 +163,13 @@ Viewing files in the terminal . . .
 ```{}
 # less is a command that allows you to view the contents of a file one page at a time
 
-
+#press q to get out of less
 ```
 
 ```{}
 # cat stands for concatenate, it prints the contents of a file to the terminal
 
-
+#not reccomended for large files
 ```
 
 ```{}
@@ -186,7 +187,7 @@ Viewing files in the terminal . . .
 2.Go into your data folder and make a new directory called "blast_results".
 What commands did you use to make the blast_results folder?
 ```{}
-
+mkdir blast_results/
 ```
 
 3. What are some of the genes found in e.coli *(Hint: look at the e.coli_cds.fasta file)*? What command did you use to find the genes?
@@ -204,7 +205,8 @@ What commands did you use to make the blast_results folder?
 
 ```
 
-
+# can use history to look at previos cammand
+# control +R reverse search your history, press control R again to look at the previous previous one
 ### That's it! Let's take a break and then move part 2.
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
