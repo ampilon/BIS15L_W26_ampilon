@@ -96,6 +96,8 @@ polar_bears %>%
   labs(title="sex by population",
        x="population",
        y=NULL) 
+# polar bears %>%
+#count(sex, pop)
 ```
 4. (6 points) How many bears were sampled in each year for both populations? Make a line plot(s) to visualize sampling by year for both populations. (hint: you will need to pull apart the date to get the year in its own column)
 ```{r}
@@ -116,6 +118,7 @@ polar_bears_w_years <- polar_bears %>%
   #labs(title= "Samples per year by population",
        #x= "Year",
        #y="Samples")
+# plot can be made many ways, both pop on same plot, or faseted as two seperate plots
 ```
 5. (2 points) What are the min, median, mean, and max values for `urea_nitrogen` and `creatinine`?
 ```{r}
@@ -141,6 +144,8 @@ pb_fasting <- pb_w_un_creat_ratio %>%
 ```
 8. (6 points) The authors found that the number of fasting bears increased in the SB population but decreased in the CS population. Make a plot(s) that shows the number of fasting bears by year for both populations to visualize this trend.
 ```{r}
+#pull out fastig=ng bears
+
 #pb_fasting %>%
   #group_by(popn) %>%
   #ggplot(aes(x = year, y =  count(fasting))) +
@@ -215,6 +220,8 @@ library(shiny)
 #}
 
 #shinyApp(ui, server)
+
+# can leave in NAs
 ```
 
 ## Submit the Midterm
