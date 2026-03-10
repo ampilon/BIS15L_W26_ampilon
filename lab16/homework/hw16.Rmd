@@ -46,6 +46,7 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 **1. Read the "gene of interest" sequence from the `goi_01.txt` file into R using the Biostrings package. Store this in an object called `query_seq`.What type sequence is this? (DNA, RNA or Protien) **
 ```{r}
 
+
 ```
 
 ```{r}
@@ -55,28 +56,44 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 
 **2.Perform a blastx search using `goi_01.txt` as the query and the "core_nt" database. Download the cluster table results in CSV format, change the name to "goi_01_blastx.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
-
+goi_01_blastx <- read.csv("data/goi_01_blastx.csv") %>%
+  clean_names()
 ```
 
 ```{r}
-
+goi_01_blastx <- goi_01_blastx %>%
+  mutate(
+    protein = str_remove(representative_sequence, " \\[.*\\]"),
+    scientific_name = str_extract(representative_sequence, "(?<=\\[).*(?=\\])")
+  )
 ```
 
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
 ```{r}
-
+goi_01_blastx %>%
+  select(cluster_ancestor, representative_sequence, max_score, query_cover, e_value, per_ident, scientific_name) %>%
+  arrange(desc(e_value)) %>%
+  slice_head(n=10)
 ```
  
 
 **4. create a plot that shows the different in percent identity for each Scientific Name of the top 10 blastx hits. Make sure to label your axes and give your plot a title.**
 ```{r}
-
+goi_01_blastx %>%
+  select(e_value, per_ident, scientific_name) %>%
+  arrange(desc(e_value)) %>%
+  slice_head(n=10) %>%
+  ggplot(aes(x = scientific_name, y = per_ident, fill = "pink3")) +
+  geom_col() +
+  labs(x = "Scientific Name", y = "Percent Identity", title = "Percent Identity of Top 10 BlastX Hits") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 
 **5 Perform a blastn search using `goi_01.txt` as the query and the "core_nt" database. Download the alignment description in CSV format, change the name to "goi_01_blastn.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastn.**
 ```{r}
-
+goi_01_blastn <- read.csv("data/goi_01_blastn.csv") %>%
+  clean_names()
 ```
 
 ```{r}
@@ -85,12 +102,14 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 
 **6. What was the top blastn hit, based on e_value, for this blastn search? (Include the Cluster Ancestor, Cluster, Representative Sequence, Max Score, Query Cover, E value, Percent Identity and Accession Link)**
 ```{r}
-
+goi_01_blastn %>%
+  arrange(desc(e_value)) %>%
+  slice_head(n=1)
 ```
 
 **7. Based on the blastx and blastn results, what do you think this gene is and what bacteria do you think it came from?**
 ```{}
-
+# I think the gene is the protective layer if a tail and it came from Yersinia pestis. 
 ```
 
 **8. For the top blastn hit, click on the accession link for this bacteria and download the coding sequences as a FASTA Protein file. Read the fasta file into R using the Biostrings package and store it in an object called `goi_blastn_hit`.**
