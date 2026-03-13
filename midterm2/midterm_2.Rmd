@@ -96,33 +96,38 @@ polar_bears %>%
   labs(title="sex by population",
        x="population",
        y=NULL) 
-# polar bears %>%
-#count(sex, pop)
 ```
+
+```{r}
+polar_bears %>%
+count(sex, popn)
+```
+
 4. (6 points) How many bears were sampled in each year for both populations? Make a line plot(s) to visualize sampling by year for both populations. (hint: you will need to pull apart the date to get the year in its own column)
 ```{r}
-polar_bears_w_years <- polar_bears %>%
+polar_bears <- polar_bears %>%
     separate(
     capture_date,
     into = c("year", "month", "day"),
     sep = "-")
 
 ```
+
 ```{r}
- #polar_bears_w_years %>%
-  #group_by(popn) %>%
-  #mutate(year = factor(year)) %>%
-  #ggplot(aes(x = year, y =  count(year)) )+
-  #geom_line()+
-  #theme(axis.text.x = element_text(angle=90, hjust = 1))+
-  #labs(title= "Samples per year by population",
-       #x= "Year",
-       #y="Samples")
+ polar_bears %>%
+  count(popn, year) %>%
+  ggplot(aes(x = as.numeric(year), y = n, group = popn, color= popn)) +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Samples per year",
+       x = "Year",
+       y = "Samples")
+
 # plot can be made many ways, both pop on same plot, or faseted as two seperate plots
 ```
 5. (2 points) What are the min, median, mean, and max values for `urea_nitrogen` and `creatinine`?
 ```{r}
-polar_bears_w_years %>%
+polar_bears %>%
   summarise( min_u = min(urea_nitrogen),
              max_u = max(urea_nitrogen),
              mean_u = mean(urea_nitrogen),
@@ -133,31 +138,33 @@ polar_bears_w_years %>%
 ```
 6. (3 points) As explained above, the ratio of `urea_nitrogen` to `creatinine` is used as an index of fasting. To calculate the ratio, we need to multiply `urea_nitrogen` by 0.466, then divide by `creatinine`. Create a new variable called `un_creat_ratio` that contains this calculation.
 ```{r}
-pb_w_un_creat_ratio <- polar_bears_w_years %>%
-  reframe(un_creat_ratio = ((urea_nitrogen*.466)/creatinine))
+polar_bears <- polar_bears %>%
+  mutate(un_creat_ratio = ((urea_nitrogen*.466)/creatinine))
 ```
 7. (4 points) The authors of the study categorized bears as fasting if their `un_creat_ratio` was less than or equal to 10. Use `case_when()` to create a new variable called `fasting` that categorizes bears as fasting or not.
 ```{r}
-pb_fasting <- pb_w_un_creat_ratio %>%
-  mutate(fasting=case_when(un_creat_ratio<=10 ~ "t",
-                                   un_creat_ratio > 10 ~ "f"))
+polar_bears <- polar_bears %>%
+  mutate(fasting=case_when(un_creat_ratio<=10 ~ "T",
+                                   un_creat_ratio > 10 ~ "F"))
 ```
 8. (6 points) The authors found that the number of fasting bears increased in the SB population but decreased in the CS population. Make a plot(s) that shows the number of fasting bears by year for both populations to visualize this trend.
 ```{r}
-#pull out fastig=ng bears
+#pull out fasting bears
 
-#pb_fasting %>%
-  #group_by(popn) %>%
-  #ggplot(aes(x = year, y =  count(fasting))) +
-  #geom_line()+
-  #theme(axis.text.x = element_text(angle=90, hjust = 1))+
-  #labs(title= "Fasting per year by population",
-       #x= "Year",
-       #y="Fasting")
+polar_bears %>%
+  filter(fasting == "T") %>%
+  count(popn, year, fasting) %>%
+  ggplot(aes(x = year, y =  n, group = popn, color = popn)) +
+  geom_line()+
+  facet_wrap(~popn)+
+  theme(axis.text.x = element_text(angle=90, hjust = 1))+
+  labs(title= "Fasting per year by population",
+       x= "Year",
+       y="Fasting")
 ```
 9. (8 points) Where are the polar bears used in this study located? Make a static (not leaflet) distribution map that shows the locations of  bears by population. (hint: use `color=popn` in the `aes()` of `geom_point()`)
 ```{r}
-polar_bears_w_years %>%
+polar_bears %>%
   select(long, lat) %>%
   summary()
 ```
@@ -174,52 +181,51 @@ mappb <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom = 7)
 
 ```{r}
 ggmap(mappb) +
-  geom_point(data = polar_bears_w_years, aes(long, lat, color=popn), size = 0.5, , alpha = 0.8)+
+  geom_point(data = polar_bears, aes(long, lat, color=popn), size = 1, , alpha = 0.8)+
   labs(x = "Longitude", y = "Latitude", title = "Polar Bears by Population")
 ```
 10. (10 points) Build a simple shiny app that shows the range of `un_creat_ratio` values for both populations. The user should be able to select the fill variable and choose between sex, mating, age_class, denning, and fasting. Please use the code chunk below so that your exam knits.
 ```{r, eval=F, echo=T}
 library(shiny)
 
-#ui <- dashboardPage(
+ui <- dashboardPage(
   
-  #dashboardHeader(title = "Ratio by Population"),
+  dashboardHeader(title = "Ratio by Population"),
   
-  #dashboardSidebar(
+  dashboardSidebar(
  
-    #selectInput("y",
-              #"Select a variable of interest",
-              #choices = c("sex",
-                          #"mating",
-                          #"age_class",
-                         # "denning",
-                         # "fasting."),
-              #selected = "sex")
+    selectInput("y",
+              "Select a variable of interest",
+              choices = c("sex",
+                          "mating",
+                          "age_class",
+                          "denning",
+                          "fasting"),
+              selected = "sex")
   
-#),
+),
 
- # dashboardBody(
+  dashboardBody(
     
- # plotOutput("plot", width = "500px", height = "400px")
+  plotOutput("plot", width = "500px", height = "400px")
   
-#  )  
-#)
+  )  
+)
 
-#server <- function(input, output, session) {
+server <- function(input, output, session) {
 
- #output$plot <- renderPlot({
+ output$plot <- renderPlot({
     
-   #pb_fasting %>%
-   #   ggplot(aes(x= popn, y=un_creat_ratio ))+
-    #  geom_boxplot(fill = .data[[input$y]],
-  #                 color = "black") +
-  #    theme_classic()    
+   polar_bears %>%
+      ggplot(aes(x= popn, y=un_creat_ratio, fill = .data[[input$y]]))+
+      geom_boxplot(color = "black") +
+      theme_classic()    
     
-  #})
+  })
     
-#}
+}
 
-#shinyApp(ui, server)
+shinyApp(ui, server)
 
 # can leave in NAs
 ```
